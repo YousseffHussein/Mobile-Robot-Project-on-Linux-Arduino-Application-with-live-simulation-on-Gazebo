@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<robot name="robot" xmlns:xacro="http://wiki.ros.org/xacro">
+
+  <xacro:arg name="robot_type" default="omni"/>
+
+  <xacro:property name="type" value="$(arg robot_type)" />
+
+  <xacro:include filename="$(find mybot_pkg)/urdf/base.xacro"/>
+  <xacro:include filename="$(find mybot_pkg)/urdf/pillar.xacro"/>
+  <xacro:include filename="$(find mybot_pkg)/urdf/motor.xacro"/>
+  <xacro:include filename="$(find mybot_pkg)/urdf/lidar.xacro"/>
+  <xacro:include filename="$(find mybot_pkg)/urdf/wheel.xacro"/>
+
+  <link name="world_link" />
+
+  <xacro:robot_base parent="world_link" child="first_base_link" xyz="0 0 0.075" rpy="0 0 0" />
+  <xacro:robot_base parent="first_base_link" child="second_base_link" xyz="0 0 0.06" rpy="0 0 0" />
+
+  <xacro:robot_pillar parent="first_base_link" child="first_front_left_pillar_link" xyz="0.11 0.065 0.03" rpy="0 0 0" />
+  <xacro:robot_pillar parent="first_base_link" child="first_front_right_pillar_link" xyz="0.11 -0.065 0.03" rpy="0 0 0" />
+  <xacro:robot_pillar parent="first_base_link" child="first_back_left_pillar_link" xyz="-0.11 0.065 0.03" rpy="0 0 0" />
+  <xacro:robot_pillar parent="first_base_link" child="first_back_right_pillar_link" xyz="-0.11 -0.065 0.03" rpy="0 0 0" />
+
+  <xacro:robot_motor parent="first_base_link" child="front_left_motor_link" xyz="0.10 0.040 0.01" rpy="0 0 0" />
+  <xacro:robot_motor parent="first_base_link" child="front_right_motor_link" xyz="0.10 -0.040 0.01" rpy="0 0 0" />
+  <xacro:robot_motor parent="first_base_link" child="back_left_motor_link" xyz="-0.10 0.040 0.01" rpy="0 0 0" />
+  <xacro:robot_motor parent="first_base_link" child="back_right_motor_link" xyz="-0.10 -0.040 0.01" rpy="0 0 0" />
+
+  <xacro:wheel parent="front_left_motor_link" child="front_left_wheel_link" xyz="0.0 0.060 -0.015" rpy="1.57 0 0" robot_type="$(arg robot_type)" />
+  <xacro:wheel parent="front_right_motor_link" child="front_right_wheel_link" xyz="0.0 -0.060 -0.015" rpy="1.57 0 0" robot_type="$(arg robot_type)" />
+  <xacro:wheel parent="back_left_motor_link" child="back_left_wheel_link" xyz="0.0 0.060 -0.015" rpy="1.57 0 0" robot_type="$(arg robot_type)" />
+  <xacro:wheel parent="back_right_motor_link" child="back_right_wheel_link" xyz="0.0 -0.060 -0.015" rpy="1.57 0 0" robot_type="$(arg robot_type)" />
+
+ <xacro:if value="${type == 'omni'}">
+    <gazebo>
+     <plugin name="object_controller" filename="libgazebo_ros_planar_move.so">
+
+
+      <!-- Set control loop update rate -->
+      <update_rate>100</update_rate>
+      <!-- Set odom publish rate -->
+      <publish_rate>10</publish_rate>
+
+      <!-- Set if odom required -->
+      <publish_odom>true</publish_odom>
+      <publish_odom_tf>true</publish_odom_tf>
+
+      <!-- Frame IDs -->
+      <odometry_frame>odom</odometry_frame>
+      <robot_base_frame>base_link</robot_base_frame>
+
+      <!-- Set odom covariance -->
+      <covariance_x>0.0001</covariance_x>
+      <covariance_y>0.0001</covariance_y>
+      <covariance_yaw>0.01</covariance_yaw>
+
+   	 </plugin>
+    
+    </gazebo>
+  </xacro:if>
+
+</robot>
